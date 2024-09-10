@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  healthmonitor-api:
+    container_name: healthmonitor-api
+    image: ${DOCKER_REGISTRY-}healthmonitorapi
+    build:
+      context: .
+      dockerfile: HealthMonitor.API/Dockerfile
+    ports:
+      - "5200:80"
+
+  dbPostgres:
+    image: postgres
+    container_name: dbPostgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=healthdb
+    volumes:
+      - healthdb_data:/var/lib/postgresql/data/
+
+volumes:
+  healthdb_data:

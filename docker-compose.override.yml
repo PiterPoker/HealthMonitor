@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  healthmonitor-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5200:80"
+  dbPostgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: healthdb
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - healthdb_data:/var/lib/postgresql/data
