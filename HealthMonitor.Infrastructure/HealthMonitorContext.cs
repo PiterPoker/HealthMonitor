@@ -12,6 +12,7 @@ namespace HealthMonitor.Infrastructure
 {
     public class HealthMonitorContext : DbContext, IUnitOfWork
     {
+        public const string DEFAULT_SCHEMA = "hm";
         public DbSet<Patient> Patients { get; set; }
 
         public HealthMonitorContext(DbContextOptions<HealthMonitorContext> options) : base(options)
@@ -21,6 +22,7 @@ namespace HealthMonitor.Infrastructure
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new PersonEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new PatientEntityTypeConfiguration());
         }
 

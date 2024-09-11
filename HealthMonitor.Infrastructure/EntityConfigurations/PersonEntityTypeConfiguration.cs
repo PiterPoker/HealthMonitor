@@ -1,6 +1,8 @@
 ﻿using HealthMonitor.Domain.AggregatesModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.ValueGeneration;
+using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +16,13 @@ namespace HealthMonitor.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Person> builder)
         {
-            builder.ToTable("persons", string.Empty);
+            builder.ToTable("persons", HealthMonitorContext.DEFAULT_SCHEMA);
 
             builder.HasKey(cr => cr.Id);
 
             builder.Property(u => u.Id)
-                .UseHiLo("persons_Id_seq", string.Empty);
+                .HasValueGenerator<GuidValueGenerator>()
+                .UseHiLo("persons_Id_seq", HealthMonitorContext.DEFAULT_SCHEMA);
 
             builder
                 .HasDiscriminator<Guid>("persons_type")
@@ -27,19 +30,19 @@ namespace HealthMonitor.Infrastructure.EntityConfigurations
                 .HasValue<Patient>(Guid.Parse("597cf4f2-99b6-427a-b3f9-4b3f6eed3b6a"));
 
             builder
-                .Property<int>("_recordTypeId")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .Property<int?>("_recordTypeId")
+                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
                 .HasColumnName("record_type_id")
                 .IsRequired(false);
             builder
                 .Property<string?>("_givenJson")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("record_type_id")
+                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .HasColumnName("given_json")
                 .IsRequired(false);
             builder
-                .Property<int>("_recordTypeId")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
-                .HasColumnName("record_type_id")
+                .Property<string>("_family")
+                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .HasColumnName("family")
                 .IsRequired();
 
         }

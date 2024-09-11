@@ -14,25 +14,25 @@ namespace HealthMonitor.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Patient> builder)
         {
-            builder
-                .HasIndex("birthdate");
 
             builder
-                .Property<int>("_genderId")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .Property<int?>("_genderId")
+                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
                 .HasColumnName("genderid")
                 .IsRequired(false);
             builder
                 .Property<DateTime>("_birthDate")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
                 .HasColumnName("birthdate")
                 .IsRequired();
             builder
-                .Property<string>("_status")
-                .UsePropertyAccessMode(PropertyAccessMode.Field)
+                .Property<string?>("_status")
+                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
                 .HasColumnName("status")
                 .IsRequired(false);
 
+            builder
+                .HasIndex("_birthDate");
         }
     }
 }

@@ -8,13 +8,13 @@ namespace HealthMonitor.Domain.AggregatesModel
 {
     public class Patient : Person
     {
-		private int _genderId;
+		private int? _genderId;
 		private DateTime _birthDate;
-		private string _status;
+		private string? _status;
 
         public Gender Gender
 		{
-			get { return Gender.From(_genderId); }
+			get { return Gender.From(_genderId.Value); }
 			set { _genderId = _genderId = value.Id; }
 		}
 

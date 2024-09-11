@@ -35,7 +35,7 @@ namespace HealthMonitor.Infrastructure.Repositories
             }
         }
 
-        public async Task Delete(Guid Id)
+        public async Task Delete(int Id)
         {
             var patient = await _context.Patients
                 .SingleAsync(c => c.Id == Id);
@@ -43,7 +43,7 @@ namespace HealthMonitor.Infrastructure.Repositories
             _context.Patients.Remove(patient);
         }
 
-        public async Task<Patient> Get(Guid Id)
+        public async Task<Patient> Get(int Id)
         {
             var patient = await _context.Patients
                 .SingleAsync(c => c.Id == Id);
@@ -51,7 +51,7 @@ namespace HealthMonitor.Infrastructure.Repositories
             return patient;
         }
 
-        public async Task<IEnumerable<Patient>> GetAll(Expression<Func<Patient, bool>> predicate)
+        public async Task<IEnumerable<Patient>> GetAll(Expression<Func<Patient, bool>>? predicate = default)
         {
             return await (predicate is not null ? _context.Patients
                 .Where(predicate) :
