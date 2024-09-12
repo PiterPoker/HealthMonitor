@@ -23,15 +23,6 @@ namespace HealthMonitor.API.Infrastructure
             {
                 throw new ArgumentNullException(nameof(connectionString));
             }
-
-            // Register the command validators for the validator behavior (validators based on FluentValidation library)
-            /*services.AddSingleton<IValidator<CancelOrderCommand>, CancelOrderCommandValidator>();
-            services.AddSingleton<IValidator<CreateOrderCommand>, CreateOrderCommandValidator>();
-            services.AddSingleton<IValidator<IdentifiedCommand<CreateOrderCommand, bool>>, IdentifiedCommandValidator>();
-            services.AddSingleton<IValidator<ShipOrderCommand>, ShipOrderCommandValidator>();
-
-            services.AddScoped<IOrderQueries, OrderQueries>();
-            services.AddScoped<IBuyerRepository, BuyerRepository>();*/
             services.AddScoped<IPatientRepository, PatientRepository>();
 
             return services;
