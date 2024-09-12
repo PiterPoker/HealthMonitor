@@ -17,7 +17,7 @@ namespace HealthMonitor.Infrastructure
 
         public HealthMonitorContext(DbContextOptions<HealthMonitorContext> options) : base(options)
         {
-            Database.EnsureDeleted();
+            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

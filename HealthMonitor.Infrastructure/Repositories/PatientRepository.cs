@@ -35,7 +35,7 @@ namespace HealthMonitor.Infrastructure.Repositories
             }
         }
 
-        public async Task Delete(int Id)
+        public async Task Delete(Guid Id)
         {
             var patient = await _context.Patients
                 .SingleAsync(c => c.Id == Id);
@@ -43,7 +43,7 @@ namespace HealthMonitor.Infrastructure.Repositories
             _context.Patients.Remove(patient);
         }
 
-        public async Task<Patient> Get(int Id)
+        public async Task<Patient> Get(Guid Id)
         {
             var patient = await _context.Patients
                 .SingleAsync(c => c.Id == Id);
@@ -63,6 +63,13 @@ namespace HealthMonitor.Infrastructure.Repositories
         {
             return _context.Patients
                     .Update(patient)
+                    .Entity;
+        }
+
+        public Patient Create(Patient patient)
+        {
+            return _context.Patients
+                    .Add(patient)
                     .Entity;
         }
     }

@@ -21,8 +21,8 @@ namespace HealthMonitor.Infrastructure.EntityConfigurations
             builder.HasKey(cr => cr.Id);
 
             builder.Property(u => u.Id)
-                .HasValueGenerator<GuidValueGenerator>()
-                .UseHiLo("persons_Id_seq", HealthMonitorContext.DEFAULT_SCHEMA);
+                .HasColumnName("id")
+                .HasValueGenerator<GuidValueGenerator>();
 
             builder
                 .HasDiscriminator<Guid>("persons_type")
@@ -30,18 +30,15 @@ namespace HealthMonitor.Infrastructure.EntityConfigurations
                 .HasValue<Patient>(Guid.Parse("597cf4f2-99b6-427a-b3f9-4b3f6eed3b6a"));
 
             builder
-                .Property<int?>("_recordTypeId")
-                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .Property(p=>p.RecordTypeId)
                 .HasColumnName("record_type_id")
-                .IsRequired(false);
+                .IsRequired();
             builder
-                .Property<string?>("_givenJson")
-                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .Property<string>(p=>p.GivenJson)
                 .HasColumnName("given_json")
-                .IsRequired(false);
+                .IsRequired();
             builder
-                .Property<string>("_family")
-                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .Property<string>(p=>p.Family)
                 .HasColumnName("family")
                 .IsRequired();
 

@@ -16,23 +16,20 @@ namespace HealthMonitor.Infrastructure.EntityConfigurations
         {
 
             builder
-                .Property<int?>("_genderId")
-                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .Property(p=>p.GenderId)
                 .HasColumnName("genderid")
-                .IsRequired(false);
+                .IsRequired();
             builder
-                .Property<DateTime>("_birthDate")
-                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .Property<DateTime>(p=>p.BirthDate)
                 .HasColumnName("birthdate")
                 .IsRequired();
             builder
-                .Property<string?>("_status")
-                .UsePropertyAccessMode(PropertyAccessMode.PreferField)
+                .Property(p=>p.StatusId)
                 .HasColumnName("status")
                 .IsRequired(false);
 
             builder
-                .HasIndex("_birthDate");
+                .HasIndex(p=>p.BirthDate);
         }
     }
 }
