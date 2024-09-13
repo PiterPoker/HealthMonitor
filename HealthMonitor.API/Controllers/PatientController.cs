@@ -37,13 +37,14 @@ namespace HealthMonitor.API.Controllers
         {
             try
             {
-                var patients = await _patientRepository.GetAll()
-                .Skip(pageSize * pageIndex)
+                var patients = _patientRepository.GetAll();
+                var patientCount = await patients.CountAsync();
+                var selectPatients = await patients.Skip(pageSize * pageIndex)
                 .Take(pageSize)
                 .Select(p => ViewModelHelper.ConvertToPatientViewModel(p))
                 .ToListAsync();
 
-                return Ok(new PaginatedItemsViewModel<PatientViewModel>(pageIndex, pageSize, patients.Count, patients));
+                return Ok(new PaginatedItemsViewModel<PatientViewModel>(pageIndex, pageSize, patientCount, selectPatients));
             }
             catch (Exception ex)
             {
@@ -154,24 +155,22 @@ namespace HealthMonitor.API.Controllers
         /// <summary>
         /// Поиск по дате рождения пациента
         /// </summary>
-        /// <param name="queryParams">Параметры даты рождения</param>
-        /// <param name="pageSize">Количесвто строк</param>
-        /// <param name="pageIndex">Номер страницы</param>
+        /// <param name="birthDate">Параметры даты рождения</param>
         /// <returns>Список пациентов</returns>
         [HttpGet("Search")]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(IEnumerable<PatientViewModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients([FromQuery] string queryParams, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
+        public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients([FromQuery] string[] birthDate)
         {
             try
             {
 
-                if (string.IsNullOrEmpty(queryParams))
+                if (birthDate.Any())
                 {
                     return BadRequest("birthDate parameter is required.");
                 }
                 var query = _patientRepository.GetAll();
-                MatchCollection matches = Regex.Matches(queryParams, SearchHelper.Pattern);
+                MatchCollection matches = Regex.Matches(string.Join('&',birthDate), SearchHelper.Pattern, RegexOptions.IgnoreCase);
 
                 foreach (Match match in matches)
                 {
@@ -183,13 +182,10 @@ namespace HealthMonitor.API.Controllers
 
                     Console.WriteLine($"Tag: {match.Groups[1].Value}, Date: {match.Groups[2].Value}");
                 }
-
                 var patients = await query
-                .Skip(pageSize * pageIndex)
-                .Take(pageSize)
                 .Select(p => ViewModelHelper.ConvertToPatientViewModel(p))
                 .ToListAsync();
-                return Ok(new PaginatedItemsViewModel<PatientViewModel>(pageIndex, pageSize, patients.Count, patients));
+                return Ok(patients);
             }
             catch (Exception ex)
             {

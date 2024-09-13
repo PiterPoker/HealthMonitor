@@ -1,4 +1,5 @@
-﻿using HealthMonitor.Domain.AggregatesModel;
+﻿using HealthMonitor.API.Helpers.Attributes;
+using HealthMonitor.Domain.AggregatesModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
@@ -10,8 +11,8 @@ namespace HealthMonitor.API.ViewModels
     {
         [JsonPropertyName("gender")]
         public string Gender { get; set; } = Domain.AggregatesModel.Gender.Unknown.Name;
-        [Required]
-        [DataType(DataType.DateTime)]
+        [DateOfBirth]
+        [Required(ErrorMessage = "Property BirthDate is required")]
         [JsonPropertyName("birthDate")]
         public DateTime BirthDate { get; set; }
         [JsonPropertyName("active")]

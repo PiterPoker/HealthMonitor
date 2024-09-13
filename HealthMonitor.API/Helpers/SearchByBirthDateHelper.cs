@@ -9,7 +9,7 @@ namespace HealthMonitor.API.Helpers
 {
     public static class SearchHelper
     {
-        public const string Pattern = @"date=(ge|le|gt|lt|eq|ne)(\d{4}-\d{2}-\d{2}(?:((T\d{2}| \d{2}):\d{2}))?)";
+        public const string Pattern = @"(ge|le|gt|lt|eq|ne)(\d{4}-\d{2}-\d{2}(?:((T\d{2}| \d{2}):\d{2}))?)";
         public static IQueryable<Patient> SearchPatientByBirthDate(string operatorQuery, DateTime searchDate, IQueryable<Patient> query) 
         {
             return operatorQuery switch

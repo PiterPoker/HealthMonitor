@@ -8,10 +8,10 @@ namespace HealthMonitor.API.ViewModels
     {
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Property family is required")]
         [JsonPropertyName("family")]
         public string Family { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Property use is required")]
         [JsonPropertyName("use")]
         public string RecordType { get; set; } = Domain.AggregatesModel.RecordType.Official.Name;
         [JsonPropertyName("given")]
