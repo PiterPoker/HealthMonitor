@@ -20,6 +20,7 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=healthdb
+      - ConnectionStrings__DefaultConnection=localhost:5432=db;Database=healthdb;Username=admin;Password=admin
     volumes:
       - healthdb_data:/var/lib/postgresql/data/
 
