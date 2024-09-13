@@ -14,7 +14,7 @@ namespace HealthMonitor.Domain.AggregatesModel
         Patient Update(Patient patient);
         Patient Create(Patient patient);
         Task<Patient> Get(Guid Id);
-        Task<IEnumerable<Patient>> GetAll(Expression<Func<Patient, bool>>? predicate = default);
+        IQueryable<Patient> GetAll(Expression<Func<Patient, bool>>? predicate = default);
         Task Delete(Guid Id);
     }
 }

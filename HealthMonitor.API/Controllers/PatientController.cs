@@ -2,12 +2,10 @@ using HealthMonitor.API.Helpers;
 using HealthMonitor.API.ViewModels;
 using HealthMonitor.Domain.AggregatesModel;
 using HealthMonitor.Domain.Exceptions;
-using HealthMonitor.Infrastructure;
-using HealthMonitor.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace HealthMonitor.API.Controllers
 {
@@ -35,16 +33,17 @@ namespace HealthMonitor.API.Controllers
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(IEnumerable<PatientViewModel>), (int)HttpStatusCode.OK)]
-        public async Task<ActionResult<IEnumerable<PatientViewModel>>> Get([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
+        public async Task<ActionResult<PaginatedItemsViewModel<PatientViewModel>>> Get([FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
         {
             try
             {
-                var patients = await _patientRepository.GetAll();
-                var page = patients
+                var patients = await _patientRepository.GetAll()
                 .Skip(pageSize * pageIndex)
                 .Take(pageSize)
-                .Select(p => ViewModelHelper.ConvertToPatientViewModel(p));
-                return Ok(page);
+                .Select(p => ViewModelHelper.ConvertToPatientViewModel(p))
+                .ToListAsync();
+
+                return Ok(new PaginatedItemsViewModel<PatientViewModel>(pageIndex, pageSize, patients.Count, patients));
             }
             catch (Exception ex)
             {
@@ -151,5 +150,54 @@ namespace HealthMonitor.API.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Поиск по дате рождения пациента
+        /// </summary>
+        /// <param name="queryParams">Параметры даты рождения</param>
+        /// <param name="pageSize">Количесвто строк</param>
+        /// <param name="pageIndex">Номер страницы</param>
+        /// <returns>Список пациентов</returns>
+        [HttpGet("Search")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(IEnumerable<PatientViewModel>), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<IEnumerable<Patient>>> SearchPatients([FromQuery] string queryParams, [FromQuery] int pageSize = 10, [FromQuery] int pageIndex = 0)
+        {
+            try
+            {
+
+                if (string.IsNullOrEmpty(queryParams))
+                {
+                    return BadRequest("birthDate parameter is required.");
+                }
+                var query = _patientRepository.GetAll();
+                MatchCollection matches = Regex.Matches(queryParams, SearchHelper.Pattern);
+
+                foreach (Match match in matches)
+                {
+                    var operatorQuery = match?.Groups[1]?.Value;
+                    if (!DateTime.TryParse(match?.Groups[2]?.Value, out var dateQuery))
+                        throw new HealthMonitorException($"Cannot parce DateTime {nameof(dateQuery)}");
+
+                    query = SearchHelper.SearchPatientByBirthDate(operatorQuery, dateQuery, query);
+
+                    Console.WriteLine($"Tag: {match.Groups[1].Value}, Date: {match.Groups[2].Value}");
+                }
+
+                var patients = await query
+                .Skip(pageSize * pageIndex)
+                .Take(pageSize)
+                .Select(p => ViewModelHelper.ConvertToPatientViewModel(p))
+                .ToListAsync();
+                return Ok(new PaginatedItemsViewModel<PatientViewModel>(pageIndex, pageSize, patients.Count, patients));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.StackTrace);
+                return BadRequest(ex.Message);
+                throw;
+            }
+        }
+
     }
 }

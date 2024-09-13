@@ -17,6 +17,7 @@ namespace HealthMonitor.Infrastructure
 
         public HealthMonitorContext(DbContextOptions<HealthMonitorContext> options) : base(options)
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
             //Database.EnsureDeleted();
             Database.EnsureCreated();
         }

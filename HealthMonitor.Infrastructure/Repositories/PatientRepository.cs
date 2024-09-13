@@ -51,12 +51,11 @@ namespace HealthMonitor.Infrastructure.Repositories
             return patient;
         }
 
-        public async Task<IEnumerable<Patient>> GetAll(Expression<Func<Patient, bool>>? predicate = default)
+        public IQueryable<Patient> GetAll(Expression<Func<Patient, bool>>? predicate = default)
         {
-            return await (predicate is not null ? _context.Patients
+            return (predicate is not null ? _context.Patients
                 .Where(predicate) :
-                _context.Patients)
-                .ToListAsync();
+                _context.Patients);
         }
 
         public Patient Update(Patient patient)
